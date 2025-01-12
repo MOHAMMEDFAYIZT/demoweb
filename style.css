@@ -2,14 +2,21 @@
     margin: 0;
     padding: 0;
 }
-.main
+body {
+    background-image: url(web1.jpg);
+    background-size: cover; /* Makes the image cover the entire page */
+    background-repeat: no-repeat; /* Prevents the image from repeating */
+    background-position: center; /* Centers the image */
+}
+
+/*.main
 {
     width: 100%;
-    background-image:url(web1.jpg);
+    background-image:url(web1.jpg);                                         
     background-position: center;
     background-size: cover;
     height:109vh;
-}
+}*/
 .navbar{
     width: 1200px;
     height: 75px;
