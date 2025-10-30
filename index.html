@@ -529,10 +529,81 @@ int F()
     }
     else
         return (0);
-} -->
+} 
     
     fclose(input);
     fclose(output);
     printf("Lexical analysis completed. Check output.txt\n");
     return 0;
 }
+lex
+%{
+#include <stdio.h>
+#include <stdlib.h>
+int COMMENT = 0;
+%}
+
+%%
+
+"/*"    { COMMENT = 1; printf("COMMENT START: /*\n"); }
+"*/"    { COMMENT = 0; printf("COMMENT END: */\n"); }
+
+#.*     { printf("PREPROCESSOR: %s\n", yytext); }
+
+"int"|"float"|"char"|"double"|"void"|"return"|"if"|"else"|"while"|"for"   { 
+    if (!COMMENT) printf("KEYWORD: %s\n", yytext); 
+}
+
+"main"|"printf"|"scanf"   { 
+    if (!COMMENT) printf("FUNCTION: %s\n", yytext); 
+}
+
+[a-zA-Z][a-zA-Z0-9]*   { 
+    if (!COMMENT) printf("IDENTIFIER: %s\n", yytext); 
+}
+
+[0-9]+   { 
+    if (!COMMENT) printf("NUMBER: %s\n", yytext); 
+}
+
+\"[^\"]*\"   { 
+    if (!COMMENT) printf("STRING: %s\n", yytext); 
+}
+
+"+"|"-"|"*"|"/"|"="   { 
+    if (!COMMENT) printf("OPERATOR: %s\n", yytext); 
+}
+
+";"|"("|")"|"{"|"}"|"["|"]"   { 
+    if (!COMMENT) printf("SYMBOL: %s\n", yytext); 
+}
+
+[ \t]   ;  // Ignore spaces and tabs
+
+\n      ;  // Ignore new lines
+
+.       ;  // Ignore everything else
+
+%%
+
+int main() {
+    // Try to open input file
+    FILE *file = fopen("var.c", "r");
+    if (file == NULL) {
+        printf("ERROR: Could not open var.c file!\n");
+        printf("Make sure var.c exists in the same folder.\n");
+        return 1;
+    }
+    
+    printf("=== LEXICAL ANALYSIS START ===\n");
+    yyin = file;    // Set input file
+    yylex();        // Start analysis
+    printf("=== LEXICAL ANALYSIS END ===\n");
+    
+    fclose(file);
+    return 0;
+}
+
+int yywrap() {
+    return 1;
+}-->
